@@ -1,0 +1,263 @@
+<div style="width: 100vw; height: 100vh; overflow-x: hidden;">
+<!-- <div class="cont">
+  <div id="load">
+    <div>G</div>
+    <div>N</div>
+    <div>I</div>
+    <div>D</div>
+    <div>A</div>
+    <div>O</div>
+    <div>L</div>
+  </div>
+</div> -->
+<div *ngIf="!dataProfile" style="position: absolute; background-color: black; top: 0; left: 0;right: 0;bottom: 0; z-index: 9999;">
+  <div id="load">
+    <div>G</div>
+    <div>N</div>
+    <div>I</div>
+    <div>D</div>
+    <div>A</div>
+    <div>O</div>
+    <div>L</div>
+  </div>
+</div>
+
+<div class="text-right pt-5" style="overflow: hidden;">
+
+</div>
+<div class="bg-light pb-5">
+  <div class="row">
+    <div class=" col-md-3 ">
+      <div class="card">
+        <div class="border"></div>
+        <div style="position: relative;">
+          <div class="avatar">
+            <img class="mat-elevation-z1" [src]="dataProfile?.imageProfile ?? 'assets/images/image-placeholder.png'"
+              [alt]="dataProfile?.firstName + dataProfile?.lastName" />
+          </div>
+          <button class="bImg" mat-mini-fab data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+        <hr />
+        <div class="stats">
+          <h3 class="text-center" style="font-size: 22px; font-weight: 500;">{{dataProfile?.firstName}} {{dataProfile?.lastName}}</h3>
+          <hr />
+          <div>
+            <p>Email : {{dataProfile?.email}}</p>
+            <p>BirthDate : {{dataProfile?.birthDate}}</p>
+            <p>Phone : {{dataProfile?.mobile}}</p>
+            <p *ngIf="dataProfile?.male;else F">Gender : Male</p>
+            <ng-template #F>
+              <p>Gender : Female</p>
+            </ng-template>
+            <p *ngIf="dataProfile.email != 'admin@admin.com'">Doctor : {{dataProfile?.doctor}}</p>
+            <p *ngIf="dataProfile.email == 'admin@admin.com'">Type : Admin</p>
+            <p *ngIf="dataProfile.email != 'admin@admin.com'">Department : {{dataProfile?.department}}</p>
+            <div style="text-align: right; padding-right: 20px; padding-bottom: 20px;">
+              <button style="background-color: #FF4081; color: white;" mat-button color="warn" data-bs-toggle="modal"
+                data-bs-target="#exampleModal1">Edit Profile</button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class=" col-md-9">
+      <div class="shadow p-2 mx-5" style="margin: 50px auto 0;">
+        <table *ngIf="dataProfile.email !=  'admin@admin.com'" class="table table-hover text-center">
+          <thead>
+            <th>BPM</th>
+            <th>SPO2</th>
+            <th>TEMP</th>
+            <th>Date</th>
+            <th>have Covid19</th>
+            <th>See More</th>
+          </thead>
+          <tbody>
+            <tr *ngIf="userResults?.length == 0">
+              <td rowspan="5" colspan="6">
+                <p class="alert alert-danger w-100">there were no results yet</p>
+
+              </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            <tr *ngFor="let result of userResults">
+              <td>{{result.bpm}}</td>
+              <td>{{result.spo2}}</td>
+              <td>{{result.temp}}</td>
+              <td>{{result.date|date}}</td>
+              <td>{{result.haveCovid19}}</td>
+              <td><a mat-raised-button color="primary" [routerLink]="['/result',result.id]">Seemore</a></td>
+            </tr>
+
+
+          </tbody>
+
+        </table>
+
+        <div *ngIf="dataProfile.email ==  'admin@admin.com'">
+          <h1>Users :</h1>
+          <div class="row">
+            <div *ngFor="let user of users" class="col-sm-4 mb-5">
+              <div style="text-align: center;">
+              <img style="height: 200px; width: 200xp; border-radius: 50%;" [src]="user.imageProfile" alt="">
+
+              <div class="cation">
+                <p>{{user.firstName}} {{user.lastName}}</p>
+                <!-- <p>{{user.userId}}</p> -->
+                <a [routerLink]="['/userdetails',user.userId]" class="btn btn-outline-info">Details</a>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Image Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="imageUpload" (ngSubmit)="addImg()">
+          <input class="form-control" type="file" (change)="uploadFile($event)" formControlName="imageUrl"  accept="image/*"/>
+          <div class="center margin-top">
+            <button [disabled]="!visable" type="submit" mat-raised-button color="primary"
+              data-bs-dismiss="modal">Edit</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" mat-raised-button color="warn" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit User Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="updateForm" (ngSubmit)="submit()">
+
+
+
+          <div class="row" style="justify-content: center;">
+
+            <div class="col-6">
+              <mat-form-field style="padding: 5px;" appearance="outline">
+                <input matInput placeholder="FirstName" formControlName="firstName" />
+                <mat-error *ngIf="firstName?.errors?.['required']">
+                  FirstName is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-6">
+              <mat-form-field style="padding: 5px;" appearance="outline">
+                <input matInput placeholder="LastName" formControlName="lastName" />
+                <mat-error *ngIf="lastName?.errors?.['required']">
+                  LastName is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-6">
+              <mat-form-field style="padding: 5px;" appearance="outline">
+                <input matInput type="text" placeholder="Phone" formControlName="mobile" />
+                <mat-error *ngIf="mobile?.errors?.['required']">
+                  Phone is required
+                </mat-error>
+
+                <mat-error *ngIf="mobile?.errors?.['pattern']">
+                  invalid Phome Number
+                </mat-error>
+              </mat-form-field>
+
+            </div>
+
+            <div class="col-6">
+              <mat-form-field style="padding: 5px;" appearance="outline">
+                <input matInput type="date" placeholder="BirthDate" formControlName="birthDate" />
+                <mat-error *ngIf="birthDate?.errors?.['required']">
+                  BirthDate is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+
+
+            <div class="col-6">
+              <div class="form-group" style="padding: 5px;">
+                <label  class="labrl">Gender</label>
+                <select class="form-control" formControlName="male">
+                  <option  value=true>Male</option>
+                  <option  value=false>Female</option>
+                </select>
+                <mat-error *ngIf="male?.errors?.['required']">You must make a selection</mat-error>
+              </div>
+            </div>
+
+
+            <div class="col-6" *ngIf="dataProfile.email != 'admin@admin.com'">
+              <div class="form-group" style="padding: 5px;">
+                <label class="label">Doctor</label>
+                <select class="form-control" formControlName="doctor">
+                  <option value=true>Doctor</option>
+                  <option value=false>Other</option>
+                  <mat-error *ngIf="doctor?.errors?.['required']">You must make a selection</mat-error>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6" *ngIf="dataProfile.email != 'admin@admin.com'">
+              <div class="form-group" style="padding: 5px;">
+                <label class="label">Department</label>
+                <select class="form-control" formControlName="department">
+                  <option value="Communication">Communication</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Mecatronics">Mecatronics</option>
+                  <mat-error *ngIf="department?.errors?.['required']">You must make a selection</mat-error>
+                </select>
+              </div>
+            </div>
+          </div>
+
+
+
+          <br>
+          <button [disabled]="updateForm.invalid" mat-raised-button color="primary"
+            data-bs-dismiss="modal">Update</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" mat-raised-button color="warn" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
